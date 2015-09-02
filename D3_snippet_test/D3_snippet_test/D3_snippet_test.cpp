@@ -335,7 +335,7 @@ bool Vec::Parallel(Vec Partner)
 //同一始点2ベクトルから面積を求める
 long double Vec::S_vec(Vec B)
 {
-	//if(( ( *this ).getSP() == B.getSP() ))
+	if(( ( *this ).getSP() == B.getSP() ))
 	{
 		Vec G = ( *this ).Cross_product(B);
 		return sqrtl(G.Inner_product(G)) / 2.L;
@@ -356,18 +356,55 @@ long double Vec::S_vec(Vec B)
 	return -1.L;
 }
 
-int main()
+class Points
 {
-	long double xA , yA , xB , yB , xC , yC , xD , yD;
-	while(cin >> xA >> yA >> xB >> yB >> xC >> yC >> xD >> yD)
+private:
+	vector<Point>VP;
+
+public:
+	void push(Point p)
 	{
-		Vec AB(Point(xA , yA) , Point(xB , yB)) , CD(Point(xC , yC) , Point(xD , yD));
-		if(AB.Vertical(CD))
+		VP.push_back(p);
+	}
+	bool erase(Point p)
+	{
+		auto now = find(VP.begin() , VP.end() , p);
+		if(now != VP.end())
 		{
-			cout << "YES" << endl;
+			VP.erase(now);
+			return 0;
 		} else
 		{
-			cout << "NO" << endl;
+			return 1;
 		}
 	}
+
+	void print()
+	{
+		for(auto x : VP)
+		{
+			cout << x.getX() << " " << x.getY() << " " << x.getZ() << endl;
+		}
+	}
+
+};
+
+int main()
+{
+	int N;
+	cin >> N;
+	vector<pair<int , int>>data(N);
+	for(size_t i = 0; i < N; i++)
+	{
+		cin >> data[i].first >> data[i].second;
+	}
+	long double ans = 0;
+	for(size_t i = 0; i < N; i++)
+	{
+		for(size_t j = i + 1; j < N; j++)
+		{
+			ans = max(ans , Vec(Point(data[i].first , data[i].second) , Point(data[j].first , data[j].second)).length());
+		}
+	}
+	cout << fixed << setprecision(20) << ans << endl;
 }
