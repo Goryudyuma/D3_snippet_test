@@ -109,6 +109,8 @@ public:
 	long double getZ();
 
 	bool operator== (Point);
+	bool operator<(Point);
+	bool operator>(Point);
 	long double S_point(Point , Point);
 };
 
@@ -200,6 +202,23 @@ long double Point::getZ()
 bool Point::operator== (Point Partner)
 {
 	return D3(*this) == D3(Partner);
+}
+bool Point::operator<(Point Partner)
+{
+	if(( *this ).getX() != Partner.getX())
+	{
+		return ( *this ).getX() < Partner.getX();
+	}
+	if(( *this ).getY() != Partner.getY())
+	{
+		return ( *this ).getY() < Partner.getY();
+	}
+	return ( *this ).getZ() < Partner.getZ();
+
+}
+bool Point::operator>(Point Partner)
+{
+	return Partner < ( *this );
 }
 //ŽO“_‚©‚ç–ÊÏ‚ð‹‚ß‚é
 long double Point::S_point(Point B , Point C)
@@ -387,24 +406,31 @@ public:
 		}
 	}
 
+	void sort()
+	{
+		std::sort(VP.begin() , VP.end());
+	}
+
 };
 
 int main()
 {
-	int N;
-	cin >> N;
-	vector<pair<int , int>>data(N);
-	for(size_t i = 0; i < N; i++)
+	long double X,Y,Z;
+	string str;
+	Points PP;
+	while(cin >> str >> X >> Y >> Z)
 	{
-		cin >> data[i].first >> data[i].second;
-	}
-	long double ans = 0;
-	for(size_t i = 0; i < N; i++)
-	{
-		for(size_t j = i + 1; j < N; j++)
+		if(str=="push")
 		{
-			ans = max(ans , Vec(Point(data[i].first , data[i].second) , Point(data[j].first , data[j].second)).length());
+			PP.push(Point(X,Y,Z));
+		} else if(str == "erase")
+		{
+			PP.erase(Point(X , Y , Z));
+		} else
+		{
+			PP.sort();
 		}
+		PP.print();
 	}
-	cout << fixed << setprecision(20) << ans << endl;
 }
+
