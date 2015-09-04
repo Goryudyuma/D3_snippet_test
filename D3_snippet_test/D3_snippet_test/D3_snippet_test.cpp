@@ -112,6 +112,7 @@ public:
 	bool operator<(Point);
 	bool operator>(Point);
 	long double S_point(Point , Point);
+	long double V_point(Point , Point , Point);
 };
 
 class Vec
@@ -142,7 +143,10 @@ public:
 	Vec Reverse_vec();
 	bool Vertical(Vec);
 	bool Parallel(Vec);
+	bool isIntersection(Vec);
+	//Point IntersectionPoint(Vec);
 	long double S_vec(Vec);
+	long double V_vec(Vec , Vec);
 };
 
 
@@ -225,6 +229,12 @@ long double Point::S_point(Point B , Point C)
 {
 	Vec AB(*this , B) , AC(*this , C);
 	return AB.S_vec(AC);
+}
+
+//四点から体積を求める
+long double Point::V_point(Point B , Point C , Point D)
+{
+	return Vec(( *this ) , B).V_vec(Vec(( *this ) , C) , Vec(( *this ) , D));
 }
 
 
@@ -351,6 +361,42 @@ bool Vec::Parallel(Vec Partner)
 	return ( *this ).Unit_vec().getD() == Partner.Unit_vec().getD() || ( *this ).Unit_vec().Inverse_vec().getD() == Partner.Unit_vec().getD();
 }
 
+//２つのベクトルが交差しているかどうか
+//TODO:未検証
+bool Vec::isIntersection(Vec Partner)
+{
+	int count = 0;
+	Vec O = Vec(( *this ).getSP() , Partner.getSP()).Cross_product(Partner);
+	Vec P = Vec(( *this ).getGP() , Partner.getSP()).Cross_product(Partner);
+	Vec Q = Vec(Partner.getSP() , ( *this ).getSP()).Cross_product(*this);
+	Vec R = Vec(Partner.getGP() , ( *this ).getSP()).Cross_product(*this);
+	if(O.getD().X < 0 != P.getD().X < 0)
+	{
+		return false;
+	}
+	if(O.getD().Y < 0 != P.getD().Y < 0)
+	{
+		return false;
+	}
+	if(O.getD().Z < 0 != P.getD().Z < 0)
+	{
+		return false;
+	}
+	if(Q.getD().X < 0 != R.getD().X < 0)
+	{
+		return false;
+	}
+	if(Q.getD().Y < 0 != R.getD().Y < 0)
+	{
+		return false;
+	}
+	if(Q.getD().Z < 0 != R.getD().Z < 0)
+	{
+		return false;
+	}
+	return true;
+}
+
 //同一始点2ベクトルから面積を求める
 long double Vec::S_vec(Vec B)
 {
@@ -373,6 +419,16 @@ long double Vec::S_vec(Vec B)
 	}
 
 	return -1.L;
+}
+
+//同一始点かもしくは終点と始点が繋がっていなくてはいけない
+//しかし今のところその判定はなし。
+//TODO 始点と終点の同一判定
+long double Vec::V_vec(Vec B , Vec C)
+{
+	Vec G = ( *this ).Cross_product(B);
+	return G.Inner_product(C) / 6.L;
+	return 0;
 }
 
 class Points
@@ -406,31 +462,28 @@ public:
 		}
 	}
 
+	//TODO:g++で怒られないようにする
 	void sort()
 	{
-		std::sort(VP.begin() , VP.end());
+		//std::sort(VP.begin() , VP.end());
 	}
 
 };
 
 int main()
 {
-	long double X,Y,Z;
-	string str;
-	Points PP;
-	while(cin >> str >> X >> Y >> Z)
+	long double xa , ya , xb , yb , xc , yc , xd , yd;
+	char z;
+	while(cin >> xa >> z >> ya >> z >> xb >> z >> yb >> z >> xc >> z >> yc >> z >> xd >> z >> yd)
 	{
-		if(str=="push")
+		Point A(xa , ya) , B(xb , yb) , C(xc , yc) , D(xd , yd);
+		if(A.S_point(B , D) + C.S_point(B , D) == B.S_point(A , C) + D.S_point(A , C))
 		{
-			PP.push(Point(X,Y,Z));
-		} else if(str == "erase")
-		{
-			PP.erase(Point(X , Y , Z));
+			cout << "YES" << endl;
 		} else
 		{
-			PP.sort();
+			cout << "NO" << endl;
 		}
-		PP.print();
 	}
 }
 
