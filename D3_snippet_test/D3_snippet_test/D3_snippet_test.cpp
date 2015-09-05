@@ -144,7 +144,8 @@ public:
 	bool Vertical(Vec);
 	bool Parallel(Vec);
 	bool isIntersection(Vec);
-	//Point IntersectionPoint(Vec);
+	Point IntersectionPoint(Vec);
+	bool onVecPoint(Point);
 	long double S_vec(Vec);
 	long double V_vec(Vec , Vec);
 };
@@ -236,6 +237,8 @@ long double Point::V_point(Point B , Point C , Point D)
 {
 	return Vec(( *this ) , B).V_vec(Vec(( *this ) , C) , Vec(( *this ) , D));
 }
+
+
 
 
 //Vec
@@ -370,31 +373,45 @@ bool Vec::isIntersection(Vec Partner)
 	Vec P = Vec(( *this ).getGP() , Partner.getSP()).Cross_product(Partner);
 	Vec Q = Vec(Partner.getSP() , ( *this ).getSP()).Cross_product(*this);
 	Vec R = Vec(Partner.getGP() , ( *this ).getSP()).Cross_product(*this);
-	if(O.getD().X < 0 != P.getD().X < 0)
+	if(O.getD().X < 0 == P.getD().X < 0)
 	{
 		return false;
 	}
-	if(O.getD().Y < 0 != P.getD().Y < 0)
+	if(O.getD().Y < 0 == P.getD().Y < 0)
 	{
 		return false;
 	}
-	if(O.getD().Z < 0 != P.getD().Z < 0)
+	if(O.getD().Z < 0 == P.getD().Z < 0)
 	{
 		return false;
 	}
-	if(Q.getD().X < 0 != R.getD().X < 0)
+	if(Q.getD().X < 0 == R.getD().X < 0)
 	{
 		return false;
 	}
-	if(Q.getD().Y < 0 != R.getD().Y < 0)
+	if(Q.getD().Y < 0 == R.getD().Y < 0)
 	{
 		return false;
 	}
-	if(Q.getD().Z < 0 != R.getD().Z < 0)
+	if(Q.getD().Z < 0 == R.getD().Z < 0)
 	{
 		return false;
 	}
 	return true;
+}
+
+//ベクトル同士の交点を返す
+//TODO:未実装
+Point Vec::IntersectionPoint(Vec)
+{
+	return Point();
+}
+
+//ベクトル上にポイントが有るかどうかを返す
+//TODO:未実装
+bool Vec::onVecPoint(Point)
+{
+	return false;
 }
 
 //同一始点2ベクトルから面積を求める
@@ -472,18 +489,30 @@ public:
 
 int main()
 {
-	long double xa , ya , xb , yb , xc , yc , xd , yd;
-	char z;
-	while(cin >> xa >> z >> ya >> z >> xb >> z >> yb >> z >> xc >> z >> yc >> z >> xd >> z >> yd)
+	int a , b , c , d;
+	cin >> a >> b >> c >> d;
+	Vec Chop(Point(a , b) , Point(c , d));
+	int N;
+	cin >> N;
+	vector<Point>data(N);
+	for(size_t i = 0; i < N; i++)
 	{
-		Point A(xa , ya) , B(xb , yb) , C(xc , yc) , D(xd , yd);
-		if(A.S_point(B , D) + C.S_point(B , D) == B.S_point(A , C) + D.S_point(A , C))
+		cin >> a >> b;
+		data[i] = Point(a , b);
+	}
+	vector<Vec>data2(N);
+	for(size_t i = 0; i < N; i++)
+	{
+		data2[i] = Vec(data[i] , data[( i + 1 ) % N]);
+	}
+	long long int count = 0;
+	for(size_t i = 0; i < N; i++)
+	{
+		if(Chop.isIntersection(data2[i]))
 		{
-			cout << "YES" << endl;
-		} else
-		{
-			cout << "NO" << endl;
+			count++;
 		}
 	}
+	cout << count / 2 << endl;
 }
 
