@@ -96,6 +96,7 @@ public:
 
 	D3(long double , long double , long double);
 	bool operator== (D3 Partner);
+	bool operator==(long double);
 	D3 operator*(long double);
 	D3 operator/(long double);
 };
@@ -131,6 +132,7 @@ public:
 	Vec operator/(Vec Partner);
 	Vec operator/(long double);
 	bool operator== (Vec);
+	bool operator==(long double);
 	Vec Cross_product(Vec);
 	double Inner_product(Vec);
 	Vec(Point A , Point B);
@@ -164,6 +166,11 @@ D3::D3(long double x_ = 0.0L , long double y_ = 0.0L , long double z_ = 0.0L)
 bool D3::operator== (D3 Partner)
 {
 	return abs(X - Partner.X) < EPS&&abs(Y - Partner.Y) < EPS&&abs(Z - Partner.Z) < EPS;
+}
+
+bool D3::operator==(long double ld)
+{
+	return ( *this ) == D3();
 }
 
 D3 D3::operator*(long double ld)
@@ -292,16 +299,21 @@ bool Vec::operator== (Vec Partner)
 	return D == Partner.D&&SP == Partner.SP;
 }
 
+bool Vec::operator==(long double)
+{
+	return ( *this ) == Vec();
+}
+
 //外積
 Vec Vec::Cross_product(Vec Partner)
 {
-	return Vec(D.Y*Partner.D.Z - D.Z*Partner.D.Y , D.Z*Partner.D.X - D.X*Partner.D.Z , D.X*Partner.D.Y - D.Y*Partner.D.X);
+	return Vec(D.Y*Partner.getD().Z - D.Z*Partner.getD().Y , D.Z*Partner.getD().X - D.X*Partner.getD().Z , D.X*Partner.getD().Y - D.Y*Partner.getD().X);
 }
 
 //内積
 double Vec::Inner_product(Vec Partner)
 {
-	return D.X*Partner.D.X + D.Y*Partner.D.Y + D.Z*Partner.D.Z;
+	return D.X*Partner.getD().X + D.Y*Partner.getD().Y + D.Z*Partner.getD().Z;
 }
 
 //２つの点からベクトルを作る
@@ -319,7 +331,7 @@ Point Vec::getSP()
 //終点を返す
 Point Vec::getGP()
 {
-	return Point(SP.getX() + D.X , SP.getZ() + D.Z , SP.getZ() + D.Z);
+	return Point(SP.getX() + D.X , SP.getY() + D.Y , SP.getZ() + D.Z);
 }
 
 //方向を返す
@@ -365,39 +377,16 @@ bool Vec::Parallel(Vec Partner)
 }
 
 //２つのベクトルが交差しているかどうか
-//TODO:未検証
 bool Vec::isIntersection(Vec Partner)
 {
 	int count = 0;
-	Vec O = Vec(( *this ).getSP() , Partner.getSP()).Cross_product(Partner);
-	Vec P = Vec(( *this ).getGP() , Partner.getSP()).Cross_product(Partner);
-	Vec Q = Vec(Partner.getSP() , ( *this ).getSP()).Cross_product(*this);
-	Vec R = Vec(Partner.getGP() , ( *this ).getSP()).Cross_product(*this);
-	if(O.getD().X < 0 == P.getD().X < 0)
-	{
-		return false;
-	}
-	if(O.getD().Y < 0 == P.getD().Y < 0)
-	{
-		return false;
-	}
-	if(O.getD().Z < 0 == P.getD().Z < 0)
-	{
-		return false;
-	}
-	if(Q.getD().X < 0 == R.getD().X < 0)
-	{
-		return false;
-	}
-	if(Q.getD().Y < 0 == R.getD().Y < 0)
-	{
-		return false;
-	}
-	if(Q.getD().Z < 0 == R.getD().Z < 0)
-	{
-		return false;
-	}
-	return true;
+	Vec O = Partner.Cross_product(Vec(Partner.getSP() , ( *this ).getSP()));
+	Vec P = Partner.Cross_product(Vec(Partner.getSP() , ( *this ).getGP()));
+	Vec Q = ( *this ).Cross_product(Vec(( *this ).getSP() , Partner.getSP()));
+	Vec R = ( *this ).Cross_product(Vec(( *this ).getSP() , Partner.getGP()));
+	return ( !( *this ).Parallel(Partner) ) && (
+		O.getD().X*P.getD().X < D3().EPS&& O.getD().Y*P.getD().Y < D3().EPS&& O.getD().Z*P.getD().Z < D3().EPS ) && (
+		Q.getD().X*R.getD().X < D3().EPS&& Q.getD().Y*R.getD().Y < D3().EPS&& Q.getD().Z*R.getD().Z < D3().EPS );
 }
 
 //ベクトル同士の交点を返す
@@ -408,9 +397,13 @@ Point Vec::IntersectionPoint(Vec)
 }
 
 //ベクトル上にポイントが有るかどうかを返す
-//TODO:未実装
-bool Vec::onVecPoint(Point)
+bool Vec::onVecPoint(Point A)
 {
+	Vec Test(( *this ).getSP() , A);
+	if(A == ( ( *this ).getSP() ) || Test.Parallel(*this) && ( *this ).getD().X / Test.getD().X >= 1.0L)
+	{
+		return true;
+	}
 	return false;
 }
 
@@ -489,30 +482,29 @@ public:
 
 int main()
 {
-	int a , b , c , d;
-	cin >> a >> b >> c >> d;
-	Vec Chop(Point(a , b) , Point(c , d));
+	int Ax , Ay , Bx , By;
+	cin >> Ax >> Ay >> Bx >> By;
+	Vec AB(Point(Ax , Ay) , Point(Bx , By));
 	int N;
 	cin >> N;
-	vector<Point>data(N);
+	vector<Point>vP(N);
+	vector<Vec>vV(N);
 	for(size_t i = 0; i < N; i++)
 	{
-		cin >> a >> b;
-		data[i] = Point(a , b);
+		int x , y;
+		cin >> x >> y;
+		vP[i] = Point(x , y);
 	}
-	vector<Vec>data2(N);
-	for(size_t i = 0; i < N; i++)
+	for(int i = 0; i < N; i++)
 	{
-		data2[i] = Vec(data[i] , data[( i + 1 ) % N]);
+		vV[i] = Vec(vP[i] , vP[( i + 1 ) % N]);
 	}
 	long long int count = 0;
 	for(size_t i = 0; i < N; i++)
 	{
-		if(Chop.isIntersection(data2[i]))
-		{
-			count++;
-		}
+		count += AB.isIntersection(vV[i]);
 	}
-	cout << count / 2 << endl;
+	cout << count / 2 + 1 << endl;
+
 }
 
