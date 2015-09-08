@@ -89,6 +89,8 @@
 
 using namespace std;
 
+#define DEBUG 1
+
 class D3
 {
 public:
@@ -99,6 +101,8 @@ public:
 	bool operator==(long double);
 	D3 operator*(long double);
 	D3 operator/(long double);
+
+	friend ostream& operator<<(ostream& os , const D3&);
 };
 
 class Point :private D3
@@ -114,6 +118,8 @@ public:
 	bool operator>(Point);
 	long double S_point(Point , Point);
 	long double V_point(Point , Point , Point);
+
+	friend ostream& operator<<(ostream& os , const Point&);
 };
 
 class Vec
@@ -150,6 +156,9 @@ public:
 	bool onVecPoint(Point);
 	long double S_vec(Vec);
 	long double V_vec(Vec , Vec);
+
+	friend ostream& operator<<(ostream& os , const Vec&);
+
 };
 
 
@@ -181,6 +190,18 @@ D3 D3::operator*(long double ld)
 D3 D3::operator/(long double ld)
 {
 	return  *this*( ld*-1.L );
+}
+
+ostream& operator<<(ostream& os , const D3& d)
+{
+	if(DEBUG)
+	{
+		os << "D3" << endl;
+		os << "X:" << d.X << endl;
+		os << "Y:" << d.Y << endl;
+		os << "Z:" << d.Z << endl;
+	}
+	return os;
 }
 
 
@@ -246,6 +267,17 @@ long double Point::V_point(Point B , Point C , Point D)
 }
 
 
+ostream & operator<<(ostream & os , const Point &p)
+{
+	if(DEBUG)
+	{
+		os << "Point" << endl;
+		os << "X:" << p.X << endl;
+		os << "Y:" << p.Y << endl;
+		os << "Z:" << p.Z << endl;
+	}
+	return os;
+}
 
 
 //Vec
@@ -390,6 +422,7 @@ bool Vec::isIntersection(Vec Partner)
 }
 
 //ベクトル同士の交点を返す
+//必ず交点があるかどうかを確認すること！
 //TODO:未実装
 Point Vec::IntersectionPoint(Vec)
 {
@@ -441,6 +474,21 @@ long double Vec::V_vec(Vec B , Vec C)
 	return 0;
 }
 
+ostream & operator<<(ostream & os , const Vec &v)
+{
+	if(DEBUG)
+	{
+		os << "Vec" << endl;
+		os << "start point" << endl;
+		os << v.SP << endl;
+		os << "vec" << endl;
+		os << v.D << endl;
+	}
+	return os;
+}
+
+
+
 class Points
 {
 private:
@@ -482,29 +530,6 @@ public:
 
 int main()
 {
-	int Ax , Ay , Bx , By;
-	cin >> Ax >> Ay >> Bx >> By;
-	Vec AB(Point(Ax , Ay) , Point(Bx , By));
-	int N;
-	cin >> N;
-	vector<Point>vP(N);
-	vector<Vec>vV(N);
-	for(size_t i = 0; i < N; i++)
-	{
-		int x , y;
-		cin >> x >> y;
-		vP[i] = Point(x , y);
-	}
-	for(int i = 0; i < N; i++)
-	{
-		vV[i] = Vec(vP[i] , vP[( i + 1 ) % N]);
-	}
-	long long int count = 0;
-	for(size_t i = 0; i < N; i++)
-	{
-		count += AB.isIntersection(vV[i]);
-	}
-	cout << count / 2 + 1 << endl;
-
+	Vec AB(Point(1,2,3),Point(4,5,6));
+	cout<<AB;
 }
-
