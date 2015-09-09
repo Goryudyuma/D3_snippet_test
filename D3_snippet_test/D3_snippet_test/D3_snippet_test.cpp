@@ -89,6 +89,7 @@
 
 using namespace std;
 
+//提出時に必ず0とし、確認実行すること！！
 #define DEBUG 1
 
 class D3
@@ -116,6 +117,8 @@ public:
 	bool operator== (Point);
 	bool operator<(Point);
 	bool operator>(Point);
+	friend bool operator<(const Point& , const Point&);
+	friend bool operator>(const Point& , const Point&);
 	long double S_point(Point , Point);
 	long double V_point(Point , Point , Point);
 
@@ -279,6 +282,24 @@ ostream & operator<<(ostream & os , const Point &p)
 	return os;
 }
 
+bool operator<(const Point& p1 , const Point& p2)
+{
+	if(p1.X == p2.X)
+	{
+		if(p1.Y == p2.Y)
+		{
+			return p1.Z < p2.Z;
+		}
+		return p1.Y < p2.Y;
+	}
+	return p1.X < p2.X;
+}
+
+bool operator>(const Point& p1 , const Point& p2)
+{
+	return p2 < p1;
+}
+
 
 //Vec
 
@@ -433,7 +454,7 @@ Point Vec::IntersectionPoint(Vec)
 bool Vec::onVecPoint(Point A)
 {
 	Vec Test(( *this ).getSP() , A);
-	if(A == ( ( *this ).getSP() ) || Test.Parallel(*this) && ( *this ).getD().X / Test.getD().X >= 1.0L)
+	if(A == ( ( *this ).getSP() ) || ( Test.Parallel(*this) && ( *this ).getD().X / Test.getD().X >= 1.0L ))
 	{
 		return true;
 	}
@@ -520,10 +541,10 @@ public:
 		}
 	}
 
-	//TODO:g++で怒られないようにする
+	//sortします。Xの大小->Yの大小->Zの大小。
 	void sort()
 	{
-		//std::sort(VP.begin() , VP.end());
+		std::sort(VP.begin() , VP.end());
 	}
 
 };
@@ -564,6 +585,13 @@ public:
 
 int main()
 {
-	Vec AB(Point(1 , 2 , 3) , Point(4 , 5 , 6));
-	cout << AB;
+	long double x[3];
+	Points PP;
+	while(cin >> x[0] >> x[1] >> x[2])
+	{
+		PP.push(Point(x[0] , x[1] , x[2]));
+	}
+	PP.print();
+	PP.sort();
+	PP.print();
 }
