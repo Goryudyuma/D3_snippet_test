@@ -516,7 +516,7 @@ public:
 	{
 		for(auto x : VP)
 		{
-			cout << x.getX() << " " << x.getY() << " " << x.getZ() << endl;
+			cout << x << endl;
 		}
 	}
 
@@ -528,8 +528,42 @@ public:
 
 };
 
+class Vecs
+{
+private:
+	vector<Vec>VV;
+
+public:
+	void push(Vec v)
+	{
+		VV.push_back(v);
+	}
+	bool erase(Vec v)
+	{
+		auto now = find(VV.begin() , VV.end() , v);
+		if(now != VV.end())
+		{
+			VV.erase(now);
+			return 0;
+		} else
+		{
+			return 1;
+		}
+	}
+
+	void print()
+	{
+		for(auto x : VV)
+		{
+			cout << x << endl;
+		}
+	}
+
+
+};
+
 int main()
 {
-	Vec AB(Point(1,2,3),Point(4,5,6));
-	cout<<AB;
+	Vec AB(Point(1 , 2 , 3) , Point(4 , 5 , 6));
+	cout << AB;
 }
