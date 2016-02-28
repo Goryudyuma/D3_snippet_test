@@ -95,34 +95,34 @@ using namespace std;
 class D3
 {
 public:
-	long double X , Y , Z , EPS;
+	long double X, Y, Z, EPS;
 
-	D3(long double , long double , long double);
-	bool operator== (D3 Partner);
-	bool operator==(long double);
-	D3 operator*(long double);
-	D3 operator/(long double);
+	D3( long double, long double, long double );
+	bool operator== ( D3 Partner );
+	bool operator==( long double );
+	D3 operator*( long double );
+	D3 operator/( long double );
 
-	friend ostream& operator<<(ostream& os , const D3&);
+	friend ostream& operator<<( ostream& os, const D3& );
 };
 
 class Point :private D3
 {
 public:
-	Point(long double , long double , long double);
+	Point( long double, long double, long double );
 	long double getX();
 	long double getY();
 	long double getZ();
 
-	bool operator== (Point);
-	bool operator<(Point);
-	bool operator>(Point);
-	friend bool operator<(const Point& , const Point&);
-	friend bool operator>(const Point& , const Point&);
-	long double S_point(Point , Point);
-	long double V_point(Point , Point , Point);
+	bool operator== ( Point );
+	bool operator<( Point );
+	bool operator>( Point );
+	friend bool operator<( const Point&, const Point& );
+	friend bool operator>( const Point&, const Point& );
+	long double S_point( Point, Point );
+	long double V_point( Point, Point, Point );
 
-	friend ostream& operator<<(ostream& os , const Point&);
+	friend ostream& operator<<( ostream& os, const Point& );
 };
 
 class Vec
@@ -131,20 +131,20 @@ private:
 	Point SP;//Starting Point 始点
 	D3 D;//Direction 方向
 
-	Vec(D3 Direction_ , Point SP_);
+	Vec( D3 Direction_, Point SP_ );
 public:
-	Vec(long double x_ , long double y_ , long double z_ , Point);
-	Vec operator+(Vec Partner);
-	Vec operator*(Vec Partner);
-	Vec operator*(long double ld);
-	Vec operator-(Vec Partner);
-	Vec operator/(Vec Partner);
-	Vec operator/(long double);
-	bool operator== (Vec);
-	bool operator==(long double);
-	Vec Cross_product(Vec);
-	double Inner_product(Vec);
-	Vec(Point A , Point B);
+	Vec( long double x_, long double y_, long double z_, Point );
+	Vec operator+( Vec Partner );
+	Vec operator*( Vec Partner );
+	Vec operator*( long double ld );
+	Vec operator-( Vec Partner );
+	Vec operator/( Vec Partner );
+	Vec operator/( long double );
+	bool operator== ( Vec );
+	bool operator==( long double );
+	Vec Cross_product( Vec );
+	double Inner_product( Vec );
+	Vec( Point A, Point B );
 	Point getSP();
 	Point getGP();
 	D3 getD();
@@ -152,53 +152,46 @@ public:
 	Vec Unit_vec();
 	Vec Inverse_vec();
 	Vec Reverse_vec();
-	bool Vertical(Vec);
-	bool Parallel(Vec);
-	bool isIntersection(Vec);
-	Point IntersectionPoint(Vec);
-	bool onVecPoint(Point);
-	long double S_vec(Vec);
-	long double V_vec(Vec , Vec);
+	bool Vertical( Vec );
+	bool Parallel( Vec );
+	bool isIntersection( Vec );
+	Point IntersectionPoint( Vec );
+	bool onVecPoint( Point );
+	long double S_vec( Vec );
+	long double V_vec( Vec, Vec );
 
-	friend ostream& operator<<(ostream& os , const Vec&);
+	friend ostream& operator<<( ostream& os, const Vec& );
 
 };
 
 
 //D3
 
-D3::D3(long double x_ = 0.0L , long double y_ = 0.0L , long double z_ = 0.0L)
-{
+D3::D3( long double x_ = 0.0L, long double y_ = 0.0L, long double z_ = 0.0L ) {
 	X = x_;
 	Y = y_;
 	Z = z_;
 	EPS = 1e-9L;
 }
 
-bool D3::operator== (D3 Partner)
-{
-	return abs(X - Partner.X) < EPS&&abs(Y - Partner.Y) < EPS&&abs(Z - Partner.Z) < EPS;
+bool D3::operator== ( D3 Partner ) {
+	return abs( X - Partner.X ) < EPS&&abs( Y - Partner.Y ) < EPS&&abs( Z - Partner.Z ) < EPS;
 }
 
-bool D3::operator==(long double ld)
-{
-	return ( *this ) == D3();
+bool D3::operator==( long double ld ) {
+	return (*this) == D3();
 }
 
-D3 D3::operator*(long double ld)
-{
-	return D3(X*ld , Y*ld , Z*ld);
+D3 D3::operator*( long double ld ) {
+	return D3( X*ld, Y*ld, Z*ld );
 }
 
-D3 D3::operator/(long double ld)
-{
-	return  *this*( ld*-1.L );
+D3 D3::operator/( long double ld ) {
+	return  *this*(ld*-1.L);
 }
 
-ostream& operator<<(ostream& os , const D3& d)
-{
-	if(DEBUG)
-	{
+ostream& operator<<( ostream& os, const D3& d ) {
+	if( DEBUG ) {
 		os << "D3" << endl;
 		os << "X:" << d.X << endl;
 		os << "Y:" << d.Y << endl;
@@ -210,70 +203,57 @@ ostream& operator<<(ostream& os , const D3& d)
 
 //Point
 
-Point::Point(long double x_ = 0.0L , long double y_ = 0.0L , long double z_ = 0.0L)
-{
+Point::Point( long double x_ = 0.0L, long double y_ = 0.0L, long double z_ = 0.0L ) {
 	X = x_;
 	Y = y_;
 	Z = z_;
 }
 
 //x座標を返す
-long double Point::getX()
-{
+long double Point::getX() {
 	return X;
 }
 
 //y座標を返す
-long double Point::getY()
-{
+long double Point::getY() {
 	return Y;
 }
 
 //z座標を返す
-long double Point::getZ()
-{
+long double Point::getZ() {
 	return Z;
 }
 
-bool Point::operator== (Point Partner)
-{
-	return D3(*this) == D3(Partner);
+bool Point::operator== ( Point Partner ) {
+	return D3( *this ) == D3( Partner );
 }
-bool Point::operator<(Point Partner)
-{
-	if(( *this ).getX() != Partner.getX())
-	{
-		return ( *this ).getX() < Partner.getX();
+bool Point::operator<( Point Partner ) {
+	if( (*this).getX() != Partner.getX() ) {
+		return (*this).getX() < Partner.getX();
 	}
-	if(( *this ).getY() != Partner.getY())
-	{
-		return ( *this ).getY() < Partner.getY();
+	if( (*this).getY() != Partner.getY() ) {
+		return (*this).getY() < Partner.getY();
 	}
-	return ( *this ).getZ() < Partner.getZ();
+	return (*this).getZ() < Partner.getZ();
 
 }
-bool Point::operator>(Point Partner)
-{
-	return Partner < ( *this );
+bool Point::operator>( Point Partner ) {
+	return Partner < (*this);
 }
 //三点から面積を求める
-long double Point::S_point(Point B , Point C)
-{
-	Vec AB(*this , B) , AC(*this , C);
-	return AB.S_vec(AC);
+long double Point::S_point( Point B, Point C ) {
+	Vec AB( *this, B ), AC( *this, C );
+	return AB.S_vec( AC );
 }
 
 //四点から体積を求める
-long double Point::V_point(Point B , Point C , Point D)
-{
-	return Vec(( *this ) , B).V_vec(Vec(( *this ) , C) , Vec(( *this ) , D));
+long double Point::V_point( Point B, Point C, Point D ) {
+	return Vec( (*this), B ).V_vec( Vec( (*this), C ), Vec( (*this), D ) );
 }
 
 
-ostream & operator<<(ostream & os , const Point &p)
-{
-	if(DEBUG)
-	{
+ostream & operator<<( ostream & os, const Point &p ) {
+	if( DEBUG ) {
 		os << "Point" << endl;
 		os << "X:" << p.X << endl;
 		os << "Y:" << p.Y << endl;
@@ -282,12 +262,9 @@ ostream & operator<<(ostream & os , const Point &p)
 	return os;
 }
 
-bool operator<(const Point& p1 , const Point& p2)
-{
-	if(p1.X == p2.X)
-	{
-		if(p1.Y == p2.Y)
-		{
+bool operator<( const Point& p1, const Point& p2 ) {
+	if( p1.X == p2.X ) {
+		if( p1.Y == p2.Y ) {
 			return p1.Z < p2.Z;
 		}
 		return p1.Y < p2.Y;
@@ -295,8 +272,7 @@ bool operator<(const Point& p1 , const Point& p2)
 	return p1.X < p2.X;
 }
 
-bool operator>(const Point& p1 , const Point& p2)
-{
+bool operator>( const Point& p1, const Point& p2 ) {
 	return p2 < p1;
 }
 
@@ -304,182 +280,159 @@ bool operator>(const Point& p1 , const Point& p2)
 //Vec
 
 //ベクトルと始点からベクトルを作る
-Vec::Vec(D3 Direction_ , Point SP_)
-{
+Vec::Vec( D3 Direction_, Point SP_ ) {
 	D = Direction_;
 	SP = SP_;
 }
 
 //始点と各ベクトルの長さからベクトルを作る
-Vec::Vec(long double x_ = 0.0L , long double y_ = 0.0L , long double z_ = 0.0L , Point SP_ = Point())
-{
-	*this = Vec(D3(x_ , y_ , z_) , SP_);
+Vec::Vec( long double x_ = 0.0L, long double y_ = 0.0L, long double z_ = 0.0L, Point SP_ = Point() ) {
+	*this = Vec( D3( x_, y_, z_ ), SP_ );
 }
 
-Vec Vec::operator+(Vec Partner)
-{
-	return Vec(D.X + Partner.D.X , D.Y + Partner.D.Y , D.Z + Partner.D.Z , SP);
+Vec Vec::operator+( Vec Partner ) {
+	return Vec( D.X + Partner.D.X, D.Y + Partner.D.Y, D.Z + Partner.D.Z, SP );
 }
 
-Vec Vec::operator*(Vec Partner)
-{
-	return Vec(D.X * Partner.D.X , D.Y * Partner.D.Y , D.Z * Partner.D.Z , SP);
+Vec Vec::operator*( Vec Partner ) {
+	return Vec( D.X * Partner.D.X, D.Y * Partner.D.Y, D.Z * Partner.D.Z, SP );
 }
 
-Vec Vec::operator*(long double ld)
-{
-	return Vec(D*ld , SP);
+Vec Vec::operator*( long double ld ) {
+	return Vec( D*ld, SP );
 }
 
-Vec Vec::operator-(Vec Partner)
-{
-	return *this + ( Partner*( -1.L ) );
+Vec Vec::operator-( Vec Partner ) {
+	return *this + (Partner*(-1.L));
 }
 
 
-Vec Vec::operator/(Vec Partner)
-{
-	return Vec(D.X / Partner.D.X , D.Y / Partner.D.Y , D.Z / Partner.D.Z , SP);
+Vec Vec::operator/( Vec Partner ) {
+	return Vec( D.X / Partner.D.X, D.Y / Partner.D.Y, D.Z / Partner.D.Z, SP );
 }
 
-Vec Vec::operator/(long double ld)
-{
-	return *this*( 1.L / ld );
+Vec Vec::operator/( long double ld ) {
+	return *this*(1.L / ld);
 }
 
-bool Vec::operator== (Vec Partner)
-{
+bool Vec::operator== ( Vec Partner ) {
 	return D == Partner.D&&SP == Partner.SP;
 }
 
-bool Vec::operator==(long double)
-{
-	return ( *this ) == Vec();
+bool Vec::operator==( long double ) {
+	return (*this) == Vec();
 }
 
 //外積
-Vec Vec::Cross_product(Vec Partner)
-{
-	return Vec(D.Y*Partner.getD().Z - D.Z*Partner.getD().Y , D.Z*Partner.getD().X - D.X*Partner.getD().Z , D.X*Partner.getD().Y - D.Y*Partner.getD().X);
+Vec Vec::Cross_product( Vec Partner ) {
+	return Vec( D.Y*Partner.getD().Z - D.Z*Partner.getD().Y, D.Z*Partner.getD().X - D.X*Partner.getD().Z, D.X*Partner.getD().Y - D.Y*Partner.getD().X );
 }
 
 //内積
-double Vec::Inner_product(Vec Partner)
-{
+double Vec::Inner_product( Vec Partner ) {
 	return D.X*Partner.getD().X + D.Y*Partner.getD().Y + D.Z*Partner.getD().Z;
 }
 
 //２つの点からベクトルを作る
-Vec::Vec(Point A , Point B)
-{
-	*this = Vec(B.getX() - A.getX() , B.getY() - A.getY() , B.getZ() - A.getZ() , A);
+Vec::Vec( Point A, Point B ) {
+	*this = Vec( B.getX() - A.getX(), B.getY() - A.getY(), B.getZ() - A.getZ(), A );
 }
 
 //始点を返す
-Point Vec::getSP()
-{
+Point Vec::getSP() {
 	return SP;
 }
 
 //終点を返す
-Point Vec::getGP()
-{
-	return Point(SP.getX() + D.X , SP.getY() + D.Y , SP.getZ() + D.Z);
+Point Vec::getGP() {
+	return Point( SP.getX() + D.X, SP.getY() + D.Y, SP.getZ() + D.Z );
 }
 
 //方向を返す
-D3 Vec::getD()
-{
+D3 Vec::getD() {
 	return D;
 }
 
 //長さを返す
-long double Vec::length()
-{
-	return sqrtl(D.X*D.X + D.Y*D.Y + D.Z*D.Z);
+long double Vec::length() {
+	return sqrtl( D.X*D.X + D.Y*D.Y + D.Z*D.Z );
 }
 
 //単位ベクトル(長さ1)を返す
-Vec Vec::Unit_vec()
-{
-	return Vec(*this) / ( *this ).length();
+Vec Vec::Unit_vec() {
+	return Vec( *this ) / (*this).length();
 }
 
 //逆ベクトルを返す(始点は変わらず。)
-Vec Vec::Inverse_vec()
-{
-	return ( *this )*-1.L;
+Vec Vec::Inverse_vec() {
+	return (*this)*-1.L;
 }
 
 //逆ベクトルを返す(始点と終点の入れ替え。)
-Vec Vec::Reverse_vec()
-{
-	return Vec(( *this ).Inverse_vec().getD() , ( *this ).getGP());
+Vec Vec::Reverse_vec() {
+	return Vec( (*this).Inverse_vec().getD(), (*this).getGP() );
 }
 
 //垂直かどうか
-bool Vec::Vertical(Vec Partner)
-{
-	return ( *this ).Inner_product(Partner) == 0;
+bool Vec::Vertical( Vec Partner ) {
+	return (*this).Inner_product( Partner ) == 0;
 }
 
 //平行かどうか
-bool Vec::Parallel(Vec Partner)
-{
-	return ( *this ).Unit_vec().getD() == Partner.Unit_vec().getD() || ( *this ).Unit_vec().Inverse_vec().getD() == Partner.Unit_vec().getD();
+bool Vec::Parallel( Vec Partner ) {
+	return (*this).Unit_vec().getD() == Partner.Unit_vec().getD() || (*this).Unit_vec().Inverse_vec().getD() == Partner.Unit_vec().getD();
 }
 
 //２つのベクトルが交差しているかどうか
-bool Vec::isIntersection(Vec Partner)
-{
+bool Vec::isIntersection( Vec Partner ) {
 	int count = 0;
-	Vec O = Partner.Cross_product(Vec(Partner.getSP() , ( *this ).getSP()));
-	Vec P = Partner.Cross_product(Vec(Partner.getSP() , ( *this ).getGP()));
-	Vec Q = ( *this ).Cross_product(Vec(( *this ).getSP() , Partner.getSP()));
-	Vec R = ( *this ).Cross_product(Vec(( *this ).getSP() , Partner.getGP()));
-	return ( !( *this ).Parallel(Partner) ) && (
-		O.getD().X*P.getD().X < D3().EPS&& O.getD().Y*P.getD().Y < D3().EPS&& O.getD().Z*P.getD().Z < D3().EPS ) && (
-		Q.getD().X*R.getD().X < D3().EPS&& Q.getD().Y*R.getD().Y < D3().EPS&& Q.getD().Z*R.getD().Z < D3().EPS );
+	Vec O = Partner.Cross_product( Vec( Partner.getSP(), (*this).getSP() ) );
+	Vec P = Partner.Cross_product( Vec( Partner.getSP(), (*this).getGP() ) );
+	Vec Q = (*this).Cross_product( Vec( (*this).getSP(), Partner.getSP() ) );
+	Vec R = (*this).Cross_product( Vec( (*this).getSP(), Partner.getGP() ) );
+	return (!(*this).Parallel( Partner )) && (
+		O.getD().X*P.getD().X < D3().EPS&& O.getD().Y*P.getD().Y < D3().EPS&& O.getD().Z*P.getD().Z < D3().EPS) && (
+			Q.getD().X*R.getD().X < D3().EPS&& Q.getD().Y*R.getD().Y < D3().EPS&& Q.getD().Z*R.getD().Z < D3().EPS);
 }
 
 //ベクトル同士の交点を返す
 //必ず交点があるかどうかを確認すること！
-//TODO:未実装
-Point Vec::IntersectionPoint(Vec)
-{
+//TODO:三次元の場合のテスト
+Point Vec::IntersectionPoint( Vec Partner ) {
+	if( (*this).isIntersection( Partner ) ) {
+		long double d1 = abs( Partner.Cross_product( Vec( Partner.getSP(), (*this).getSP() ) ).D.Z );
+		long double d2 = abs( Partner.Cross_product( Vec( Partner.getSP(), (*this).getGP() ) ).D.Z );
+		long double t = d1 / (d1 + d2);
+		return Vec( ((*this)*t).getD(), (*this).getSP() ).getGP();
+	} else {
+		return Point();
+	}
 	return Point();
 }
 
 //ベクトル上にポイントが有るかどうかを返す
-bool Vec::onVecPoint(Point A)
-{
-	Vec Test(( *this ).getSP() , A);
-	if(A == ( ( *this ).getSP() ) || ( Test.Parallel(*this) && ( *this ).getD().X / Test.getD().X >= 1.0L ))
-	{
+bool Vec::onVecPoint( Point A ) {
+	Vec Test( (*this).getSP(), A );
+	if( A == ((*this).getSP()) || (Test.Parallel( *this ) && (*this).getD().X / Test.getD().X >= 1.0L) ) {
 		return true;
 	}
 	return false;
 }
 
 //同一始点2ベクトルから面積を求める
-long double Vec::S_vec(Vec B)
-{
-	if(( ( *this ).getSP() == B.getSP() ))
-	{
-		Vec G = ( *this ).Cross_product(B);
-		return sqrtl(G.Inner_product(G)) / 2.L;
+long double Vec::S_vec( Vec B ) {
+	if( ((*this).getSP() == B.getSP()) ) {
+		Vec G = (*this).Cross_product( B );
+		return sqrtl( G.Inner_product( G ) ) / 2.L;
 	}
-	if(( *this ).getGP() == B.getSP())
-	{
-		return ( *this ).Reverse_vec().S_vec(B);
+	if( (*this).getGP() == B.getSP() ) {
+		return (*this).Reverse_vec().S_vec( B );
 	}
-	if(( *this ).getSP() == B.getGP())
-	{
-		return ( *this ).S_vec(B.Reverse_vec());
+	if( (*this).getSP() == B.getGP() ) {
+		return (*this).S_vec( B.Reverse_vec() );
 	}
-	if(( *this ).getGP() == B.getGP())
-	{
-		return ( *this ).Reverse_vec().S_vec(B.Reverse_vec());
+	if( (*this).getGP() == B.getGP() ) {
+		return (*this).Reverse_vec().S_vec( B.Reverse_vec() );
 	}
 
 	return -1.L;
@@ -488,17 +441,14 @@ long double Vec::S_vec(Vec B)
 //同一始点かもしくは終点と始点が繋がっていなくてはいけない
 //しかし今のところその判定はなし。
 //TODO 始点と終点の同一判定
-long double Vec::V_vec(Vec B , Vec C)
-{
-	Vec G = ( *this ).Cross_product(B);
-	return G.Inner_product(C) / 6.L;
+long double Vec::V_vec( Vec B, Vec C ) {
+	Vec G = (*this).Cross_product( B );
+	return G.Inner_product( C ) / 6.L;
 	return 0;
 }
 
-ostream & operator<<(ostream & os , const Vec &v)
-{
-	if(DEBUG)
-	{
+ostream & operator<<( ostream & os, const Vec &v ) {
+	if( DEBUG ) {
 		os << "Vec" << endl;
 		os << "start point" << endl;
 		os << v.SP << endl;
@@ -516,71 +466,47 @@ private:
 	vector<Point>VP;
 
 public:
-	void push(Point p)
-	{
-		VP.push_back(p);
+	void push( Point p ) {
+		VP.push_back( p );
 	}
-	bool erase(Point p)
-	{
-		auto now = find(VP.begin() , VP.end() , p);
-		if(now != VP.end())
-		{
-			VP.erase(now);
+	bool erase( Point p ) {
+		auto now = find( VP.begin(), VP.end(), p );
+		if( now != VP.end() ) {
+			VP.erase( now );
 			return 0;
-		} else
-		{
+		} else {
 			return 1;
 		}
 	}
 
-	void print()
-	{
-		for(auto x : VP)
-		{
+	void print() {
+		for( auto x : VP ) {
 			cout << x << endl;
 		}
 	}
 
 	//sortします。Xの大小->Yの大小->Zの大小。
-	void sort()
-	{
-		std::sort(VP.begin() , VP.end());
+	void sort() {
+		std::sort( VP.begin(), VP.end() );
 	}
 
 };
 
-class Vecs
+class PointDistance
 {
-private:
-	vector<Vec>VV;
-
 public:
-	void push(Vec v)
-	{
-		VV.push_back(v);
-	}
-	bool erase(Vec v)
-	{
-		auto now = find(VV.begin() , VV.end() , v);
-		if(now != VV.end())
-		{
-			VV.erase(now);
-			return 0;
-		} else
-		{
-			return 1;
+	vector <int> findPoint( int x1, int y1, int x2, int y2 ) {
+		Point A( x1, y1 ), B( x2, y2 );
+		for( int i = -100; i <= 100; i++ ) {
+			for( int j = -100; j <= 100; j++ ) {
+				if( Vec( A, Point( i, j ) ).length() > Vec( B, Point( i, j ) ).length() && Vec( B, Point( i, j ) ).length() >= 1 ) {
+					return vector<int>{i, j };
+				}
+			}
 		}
+
+
 	}
-
-	void print()
-	{
-		for(auto x : VV)
-		{
-			cout << x << endl;
-		}
-	}
-
-
 };
 
 int main()
